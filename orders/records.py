@@ -1,26 +1,44 @@
 from models import venue
 from datetime import datetime
 
-def create_record(hkuid, venueid, datetime):
-    p = Record(hkuid=hkuid, venueid=venueid, datetime=datetime.now())
+from orders.models import Record
+
+
+def create_record(hkuid, venueid, datetime, type):
+
+    try:
+        p = Record(hkuid=hkuid, venueid=venueid, datetime=datetime, type=type)
+    except:
+        return "Error in creating the record"
     p.save()
-    return
+    return p.pk
 
 
-def modify_record(recordid, hkuid, venue, datetime):
-    p = Record.objects.get(pk=recordid)
+def modify_record(recordid, hkuid, venue, datetime, type):
+    try:
+        p = Record.objects.get(pk=recordid)
+    except:
+        return "Error: No such record ID!"
     p.hkuid = hkuid
     p.venue = venue
     p.datetime = datetime
+    p.type = type
     p.save()
-    return
+    return p.pk
 
 
 def delete_record(recordid):
-    p = Record.objects.get(pk=recordid)
+    try:
+        p = Record.objects.get(pk=recordid)
+    except:
+        return "Error: No such record ID!"
     p.delete()
-    return
+    return "Record deleted successfully"
 
 
 def get_records():
-    return Record.object.all()
+    records = Record.object.all()
+    if len(records) == 0:
+        return "Warning: no record available"
+    else:
+        return records
